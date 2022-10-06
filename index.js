@@ -74,7 +74,7 @@ function abrirModalAgregarProducto() {
   if (usuario) {
     modal.show();
   } else {
-    alert("Identifíquese antes de agregar un producto");
+    Swal.fire('Se requiere identificación antes de agregar un producto')
   }
 }
 
@@ -131,12 +131,27 @@ function validarFormulario(event) {
 
     productos.push(producto);
     formulario.reset();
-    alert("Producto agregado exitosamente");
+    //alert("Producto agregado exitosamente");
     actualizarProductosStorage();
     pintarProductos();
+    mostrarMensajeConfirmacion(`El producto ${nombre} fue agregado`);
   } else {
     alert("El id ya existe");
   }
+}
+
+function confirmarEliminacion(idProducto) {
+  Swal.fire({
+    icon: "question",
+    title: "¿Desea eliminar el producto?",
+    showCancelButton: true,
+    confirmButtonText: "Eliminar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      eliminarProducto(idProducto)
+    } 
+  })
 }
 
 function eliminarProducto(idProducto) {
@@ -145,9 +160,11 @@ function eliminarProducto(idProducto) {
     (producto) => Number(producto.id) === Number(idProducto)
   );
 
+  let nombreProductoEliminado = productos [indiceBorrar].nombre
   productos.splice(indiceBorrar, 1);
   columnaBorrar.remove();
   actualizarProductosStorage();
+  mostrarMensajeConfirmacion(`El producto ${nombreProductoEliminado} fue eliminado`);
 }
 
 function pintarProductos() {
@@ -183,7 +200,7 @@ function pintarProductos() {
     contenedorProductos.append(column);
 
     let botonEliminar = document.getElementById(`botonEliminar-${producto.id}`);
-    botonEliminar.onclick = () => eliminarProducto(producto.id);
+    botonEliminar.onclick = () => confirmarEliminacion(producto.id);
   });
 }
 
@@ -211,12 +228,45 @@ function obtenerUsuarioStorage() {
     mostrarTextoUsuario();
   }
 }
+const botonSwal = document.getElementById("btnSwal")
+botonSwal.onclick = mostrarSwal
+function mostrarSwal () {
+  Swal.fire({
+    title: 'Acceso a Tienda Veterinaria Gaudí',
+    text: 'Haz click para ingresar',
+    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUkq-nivArwO0bk9CbAS9uTQg1FbcYDMvFfjkHK89wrlieylq4QgnpJo0ANbXcnP8vsoo&usqp=CAU',
+    imageWidth: 400,
+    imageHeight: 200,
+    imageAlt: 'Custom image',
+    backdrop: `
+    rgba(66, 186, 193,0.4)
+  `
+  })
+}
+
+function mostrarMensajeConfirmacion(mensaje) {
+  Toastify({
+    text: mensaje,
+    duration: 3000,
+    close: true,
+    gravity: "top", 
+    position: "right", 
+    style: {
+      background: "linear-gradient(to left,  #94298d , #88b5be  )",
+    },
+  }).showToast();
+}
 
 function main() {
   inicializarElementos();
   inicializarEventos();
   obtenerProductosStorage();
   obtenerUsuarioStorage();
+  mostrarSwal();
+  mostrarMensajeConfirmacion();
 }
 
+
+
 main();
+
