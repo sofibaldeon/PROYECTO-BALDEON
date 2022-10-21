@@ -257,15 +257,25 @@ function mostrarMensajeConfirmacion(mensaje) {
   }).showToast();
 }
 
+function consultarProductosServer(){
+  fetch("https://6351ee6b9d64d7c7130ace4e.mockapi.io/productos")
+  .then((response) => response.json() )
+  .then((data) => {
+    productos = [...data]
+    pintarProductos();
+  })
+  .catch ((error) => console.log(error))
+}
+
 function main() {
+
   inicializarElementos();
   inicializarEventos();
-  obtenerProductosStorage();
   obtenerUsuarioStorage();
+  consultarProductosServer();
   mostrarSwal();
   mostrarMensajeConfirmacion();
 }
-
 
 
 main();
